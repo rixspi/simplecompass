@@ -4,16 +4,32 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
-    compileSdkVersion 26
-    defaultConfig {
-        applicationId "com.github.rixspi.simplecompass"
-        minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    compileSdkVersion sdk.compile
+    buildToolsVersion app.buildTools
+
+    dataBinding {
+        enabled = true
     }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+
+    defaultConfig {
+        applicationId app.baseId
+        minSdkVersion sdk.min
+        targetSdkVersion sdk.target
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,9 +40,52 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation kotlinBase.sdk
+
+    implementation support.appCompat
+    implementation support.appCompatV4
+    implementation support.appCompatV13
+    implementation support.design
+    implementation support.recyclerView
+    implementation support.cardView
+    kapt support.dataBinding
+
+    implementation views.constraintLayout
+
+    implementation glide.glide
+    kapt glide.glideCompiler
+    implementation glide.glideTransformations
+
+    implementation rx.java
+    implementation rx.kotlin
+    implementation rx.android
+    implementation rx.permissions
+    implementation rx.binding
+
+    implementation paperParcel.library
+    implementation paperParcel.kotlin
+    kapt paperParcel.compiler
+
+    implementation squareup.retrofit
+    implementation squareup.retrofitGson
+    implementation squareup.loggingInterceptor
+    implementation squareup.retrofitRxAdapter
+
+    implementation joda.time
+
+    implementation squareup.leakCanaryDebug
+
+    implementation dagger.di
+    implementation dagger.diSupport
+    kapt dagger.compiler
+    kapt dagger.processor
+
+    kaptTest dagger.compiler
+
+    testImplementation rx.java
+    testImplementation rx.android
+    testImplementation squareup.leakCanaryTest
+    testImplementation test.junit
+    testImplementation test.mockitoCore
+    testImplementation dagger.di
 }

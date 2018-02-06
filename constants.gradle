@@ -1,0 +1,17 @@
+ext {
+    app = [
+            buildTools: "26.0.2",
+            baseId: "com.rixspi.simplecompass"
+    ]
+
+    sdk = [
+            min: 19,
+            target: 26,
+            compile: 26
+    ]
+
+    lang = [
+            source: JavaVersion.VERSION_1_8,
+            target: JavaVersion.VERSION_1_8
+    ]
+}
