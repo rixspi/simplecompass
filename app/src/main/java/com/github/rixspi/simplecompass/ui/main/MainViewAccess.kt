@@ -1,4 +1,6 @@
 package com.github.rixspi.simplecompass.ui.main
 
 
-interface MainViewAccess {}
+interface MainViewAccess {
+    fun onBackPressed()
+}
