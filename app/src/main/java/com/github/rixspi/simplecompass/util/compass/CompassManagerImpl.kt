@@ -1,17 +1,19 @@
 package com.github.rixspi.simplecompass.util.compass
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Service
 import android.hardware.Sensor
 import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
 import android.location.LocationManager
+import android.support.annotation.RequiresPermission
 
 
-class CompassManagerImpl(private val context: Activity,
+class CompassManagerImpl(context: Activity,
                          override var orientationChangeThresholdInDegrees: Float = DEFAULT_ORIENTATION_THRESHOLD)
-    : CompassManager, SensorEventListener {
+    : CompassManager {
 
     private var currentDegree: Float = 0f
     private var orientation = FloatArray(3)
@@ -21,6 +23,8 @@ class CompassManagerImpl(private val context: Activity,
 
     private val fullCircleDegrees: Int = 360
     private val halfCircleDegrees: Int = 180
+
+    private var currentLocation: Location? = null
 
     override fun setOrientationChangeThreshold(degrees: Float) {
         orientationChangeThresholdInDegrees = degrees
@@ -80,14 +84,33 @@ class CompassManagerImpl(private val context: Activity,
      * @param lng2 the longitude of the destination location at which to point at.
      * @return degrees including the current heading of the phone.
      */
-    fun getBearingBetweenLocations(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val x = Math.cos(lat2) * Math.sin(lng1-lng2)
-        val y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng1-lng2)
-        val bearing = Math.atan2(x, y)
-        return -this.currentDegree + Math.toDegrees(bearing)
+    fun getBearingBetweenCurrentAnd(dest: Location): Double {
+        currentLocation?.let {
+            val x = Math.cos(dest.latitude) * Math.sin(it.longitude - dest.longitude)
+            val y = Math.cos(it.latitude) * Math.sin(dest.latitude) - Math.sin(it.latitude) * Math.cos(dest.latitude) * Math.cos(it.longitude - dest.longitude)
+            val bearing = Math.atan2(x, y)
+            return -this.currentDegree + Math.toDegrees(bearing)
+        } ?: run {
+            return INVALID_LOCATION
+        }
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        //no op
+
+    override fun onLocationChanged(location: Location) {
+        this.currentLocation = location
+    }
+
+    override fun unregisterLocationChangesListener() {
+        locationManager.removeUpdates(this)
+    }
+
+
+    @SuppressLint("MissingPermission")
+    @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    override fun registerLocationChangesListener() {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000L,
+                50f, this)
+
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
     }
 }

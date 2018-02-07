@@ -20,5 +20,8 @@ class CompassModule(private val fragment: CompassFragment) {
     fun provideCompassFragmentViewAccess(): CompassViewAccess = fragment
 
     @Provides
+    fun provideParentActivity(): Activity = fragment.activity
+
+    @Provides
     fun provideCompassManager(context: Activity): CompassManager = CompassManagerImpl(context)
 }
