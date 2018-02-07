@@ -1,5 +1,8 @@
 package com.github.rixspi.simplecompass.di.base
 
+import android.app.Activity
+import android.content.Context
+import android.hardware.SensorManager
 import com.github.rixspi.simplecompass.di.base.scope.ActivityScope
 import com.github.rixspi.simplecompass.util.compass.CompassManager
 import com.github.rixspi.simplecompass.util.compass.CompassManagerImpl
@@ -11,7 +14,4 @@ import javax.inject.Singleton
 @ActivityScope
 class UtilsModule {
 
-    @Provides
-    @Singleton
-    fun provideCompassManager(): CompassManager = CompassManagerImpl()
 }
