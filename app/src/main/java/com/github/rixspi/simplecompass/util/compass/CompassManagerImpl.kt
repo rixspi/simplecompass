@@ -33,15 +33,15 @@ class CompassManagerImpl(context: Activity,
     private var sensorManager: SensorManager = context.getSystemService(Service.SENSOR_SERVICE) as SensorManager
     private var locationManager: LocationManager = context.getSystemService(Service.LOCATION_SERVICE) as LocationManager
 
-    override fun registerSensorListener() {
+
+    //TODO handle another sesnors if this isn't available
+    override fun registerSensorListener() =
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
                 SensorManager.SENSOR_DELAY_UI)
-    }
 
-    override fun unregisterSensorListener() {
-        sensorManager.unregisterListener(this)
-    }
+
+    override fun unregisterSensorListener() = sensorManager.unregisterListener(this)
 
     override fun setOnCompassEventListener(compassEventListener: CompassEventListener?) {
         this.compassEventListener = compassEventListener
@@ -53,9 +53,9 @@ class CompassManagerImpl(context: Activity,
             var azimuth: Float = Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0].toDouble()).toFloat()
             azimuth = transformDegreesToRotation(-azimuth)
 
-            if (getDifferenceBetweenDegrees(currentDegree, -azimuth) > orientationChangeThresholdInDegrees) {
+//            if (getDifferenceBetweenDegrees(currentDegree, -azimuth) > orientationChangeThresholdInDegrees) {
                 compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
-            }
+//            }
             currentDegree = azimuth
         }
     }
