@@ -9,6 +9,8 @@ import com.github.rixspi.simplecompass.R
 import com.github.rixspi.simplecompass.databinding.FragmentCompassBinding
 import com.github.rixspi.simplecompass.di.compass.CompassModule
 import com.github.rixspi.simplecompass.ui.base.BaseFragment
+import com.tbruyelle.rxpermissions2.RxPermissions
+import java.util.jar.Manifest
 import javax.inject.Inject
 
 
@@ -17,6 +19,10 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
 
     @Inject
     lateinit var viewModel: CompassViewModel
+
+    private val rxPermissions: RxPermissions by lazy {
+        RxPermissions(activity)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +34,12 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
         binding.model = viewModel
         binding.viewAccess = this
 
+        rxPermissions.request(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe({
+                    if(it) {
+                        viewModel.compassManager.registerLocationChangesListener()
+                    }
+                })
 
         return binding.root
     }
@@ -40,5 +52,6 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
     override fun onPause() {
         super.onPause()
         viewModel.pauseCompass()
+        viewModel.compassManager.unregisterLocationChangesListener()
     }
 }
