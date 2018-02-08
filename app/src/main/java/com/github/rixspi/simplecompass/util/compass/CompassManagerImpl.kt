@@ -51,22 +51,22 @@ class CompassManagerImpl(context: Activity,
         if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
             SensorManager.getRotationMatrixFromVector(rMat, event.values)
             var azimuth: Float = Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0].toDouble()).toFloat()
-            azimuth = cleanDegrees(-azimuth)
+            azimuth = transformDegreesToRotation(-azimuth)
 
-            val difference = Math.abs(currentDegree - azimuth)
-            if (difference > orientationChangeThresholdInDegrees) {
+            if (getDifferenceBetweenDegrees(currentDegree, -azimuth) > orientationChangeThresholdInDegrees) {
                 compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
-                currentDegree = azimuth
             }
+            currentDegree = azimuth
         }
     }
+
+    private fun getDifferenceBetweenDegrees(first: Float, second: Float): Float = Math.abs(first - second)
 
     /**
      * Helper method for calculating proper rotation value for use in the view's rotate animation
      */
-    private fun cleanDegrees(degree: Float): Float {
-        val difference = Math.abs(currentDegree - degree)
-        return if (difference > halfCircleDegrees) {
+    private fun transformDegreesToRotation(degree: Float): Float {
+        return if (getDifferenceBetweenDegrees(currentDegree, degree) > halfCircleDegrees) {
             degree + if (currentDegree >= 0) fullCircleDegrees else -fullCircleDegrees
         } else {
             degree
