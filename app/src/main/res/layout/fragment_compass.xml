@@ -18,30 +18,100 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
-            android:id="@+id/needle"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/compass_rose"
-            app:animateRotationFrom="@{model.lastAzimuth}"
-            app:animateRotationTo="@{model.currentAzimuth}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintDimensionRatio="H, 1:1"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/destination"
-            android:layout_width="wrap_content"
-            android:background="@android:color/white"
-            android:layout_height="200dp"
-            android:scaleType="fitXY"
-            android:rotation="@{model.destinationHeading}"
-            android:src="@drawable/ic_arrow_upward_black_24dp"
-            app:layout_constraintBottom_toBottomOf="@id/needle"
-            app:layout_constraintEnd_toEndOf="@id/needle"
-            app:layout_constraintStart_toStartOf="@id/needle"
-            app:layout_constraintTop_toTopOf="@id/needle" />
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:rotation="@{model.destinationHeading}"
+                android:scaleType="fitStart"
+                app:visibleIf="@{model.destinationHeading.get() != -10000}"
+                android:src="@drawable/ic_arrow_drop_up_black_24dp" />
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/compass_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="25dp"
+                app:animateRotationFrom="@{model.lastAzimuth}"
+                app:animateRotationTo="@{model.currentAzimuth}">
+
+                <View
+                    android:id="@+id/center"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/compass_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintCircle="@id/center"
+                    app:layout_constraintCircleAngle="0"
+                    app:layout_constraintCircleRadius="140dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="180"
+                    android:text="S"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintCircle="@id/center"
+                    app:layout_constraintCircleAngle="180"
+                    app:layout_constraintCircleRadius="140dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="270"
+                    android:text="W"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintCircle="@id/center"
+                    app:layout_constraintCircleAngle="270"
+                    app:layout_constraintCircleRadius="140dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:rotation="90"
+                    android:text="E"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    app:layout_constraintCircle="@id/center"
+                    app:layout_constraintCircleAngle="90"
+                    app:layout_constraintCircleRadius="140dp" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:id="@+id/direction_phone"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_add_location_black_24dp"
+                android:rotation="180" />
+
+        </FrameLayout>
 
     </android.support.constraint.ConstraintLayout>
 </layout>
