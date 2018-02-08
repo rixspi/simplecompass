@@ -1,7 +1,6 @@
 package com.github.rixspi.simplecompass.di.compass
 
-import android.app.Service
-import android.hardware.SensorManager
+import android.app.Activity
 import com.github.rixspi.simplecompass.di.base.scope.FragmentScope
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
 import com.github.rixspi.simplecompass.ui.compass.CompassViewAccess
@@ -21,8 +20,8 @@ class CompassModule(private val fragment: CompassFragment) {
     fun provideCompassFragmentViewAccess(): CompassViewAccess = fragment
 
     @Provides
-    fun provideSensorManager(fragment: CompassFragment): SensorManager = fragment.activity.getSystemService(Service.SENSOR_SERVICE) as SensorManager
+    fun provideParentActivity(): Activity = fragment.activity
 
     @Provides
-    fun provideCompassManager(sensorManager: SensorManager): CompassManager = CompassManagerImpl(sensorManager)
+    fun provideCompassManager(context: Activity): CompassManager = CompassManagerImpl(context)
 }
