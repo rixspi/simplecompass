@@ -75,10 +75,8 @@ class CompassManagerImpl(context: Activity,
 
     override fun getBearingBetweenCurrentAnd(dest: Location): Double {
         currentLocation?.let {
-            val x = Math.cos(dest.latitude) * Math.sin(it.longitude - dest.longitude)
-            val y = Math.cos(it.latitude) * Math.sin(dest.latitude) - Math.sin(it.latitude) * Math.cos(dest.latitude) * Math.cos(it.longitude - dest.longitude)
-            val bearing = Math.atan2(x, y)
-            return this.currentDegree - Math.toDegrees(bearing)
+            val bearing: Double = currentLocation?.bearingTo(dest)?.toDouble() ?: 0.0
+            return this.currentDegree + bearing
         } ?: run {
             return INVALID_LOCATION
         }

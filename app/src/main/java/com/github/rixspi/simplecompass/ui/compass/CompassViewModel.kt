@@ -33,8 +33,8 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
             lastAzimuth.set(last)
             currentAzimuth.set(current)
             destinationHeading.set(compassManager.getBearingBetweenCurrentAnd(Location("").apply {
-                latitude = 52.520645
-                longitude = 13.409779
+                latitude = 48.864716
+                longitude = 2.349014
             }).toInt())
         }
     }
