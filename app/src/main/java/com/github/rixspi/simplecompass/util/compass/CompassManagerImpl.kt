@@ -52,10 +52,7 @@ class CompassManagerImpl(context: Activity,
             SensorManager.getRotationMatrixFromVector(rMat, event.values)
             var azimuth: Float = Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0].toDouble()).toFloat()
             azimuth = transformDegreesToRotation(-azimuth)
-
-//            if (getDifferenceBetweenDegrees(currentDegree, -azimuth) > orientationChangeThresholdInDegrees) {
-                compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
-//            }
+            compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
             currentDegree = azimuth
         }
     }
