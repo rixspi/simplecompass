@@ -73,28 +73,16 @@ class CompassManagerImpl(context: Activity,
         }
     }
 
-    /**
-     * Calculates the bearing between two locations with the current heading of the phone.
-     * With this function you can make a view that points on the destination location if you give
-     * the current location as the first parameter. You can choose whether the result should be
-     * smoothed or not.
-     * @param lat1 the latitude of the first location. This could be the current phones location
-     * @param lng1 the longitude of the first location. This could be the current phones location
-     * @param lat2 the latitude of the destination location at which to point at.
-     * @param lng2 the longitude of the destination location at which to point at.
-     * @return degrees including the current heading of the phone.
-     */
-    fun getBearingBetweenCurrentAnd(dest: Location): Double {
+    override fun getBearingBetweenCurrentAnd(dest: Location): Double {
         currentLocation?.let {
             val x = Math.cos(dest.latitude) * Math.sin(it.longitude - dest.longitude)
             val y = Math.cos(it.latitude) * Math.sin(dest.latitude) - Math.sin(it.latitude) * Math.cos(dest.latitude) * Math.cos(it.longitude - dest.longitude)
             val bearing = Math.atan2(x, y)
-            return -this.currentDegree + Math.toDegrees(bearing)
+            return this.currentDegree - Math.toDegrees(bearing)
         } ?: run {
             return INVALID_LOCATION
         }
     }
-
 
     override fun onLocationChanged(location: Location) {
         this.currentLocation = location

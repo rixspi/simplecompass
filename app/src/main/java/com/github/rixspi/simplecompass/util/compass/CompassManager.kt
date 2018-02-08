@@ -2,6 +2,7 @@ package com.github.rixspi.simplecompass.util.compass
 
 import android.hardware.Sensor
 import android.hardware.SensorEventListener
+import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.support.annotation.RequiresPermission
@@ -28,6 +29,8 @@ interface CompassManager : LocationListener, SensorEventListener {
     fun registerLocationChangesListener()
 
     fun unregisterLocationChangesListener()
+
+    fun getBearingBetweenCurrentAnd(dest: Location): Double
 
 
     // no op functions

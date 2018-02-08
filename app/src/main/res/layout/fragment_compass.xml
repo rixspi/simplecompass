@@ -30,5 +30,17 @@
             app:animateRotationTo="@{model.currentAzimuth}"
             android:src="@drawable/compass_rose"/>
 
+        <ImageView
+            android:id="@+id/destination"
+            android:layout_width="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/needle"
+            app:layout_constraintEnd_toEndOf="@id/needle"
+            app:layout_constraintTop_toTopOf="@id/needle"
+            android:paddingBottom="300dp"
+            android:rotation="@{model.destinationHeading}"
+            app:layout_constraintBottom_toBottomOf="@id/needle"
+            android:src="@drawable/leak_canary_icon"
+            android:layout_height="wrap_content" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>
