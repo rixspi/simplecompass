@@ -33,15 +33,15 @@ class CompassManagerImpl(context: Activity,
     private var sensorManager: SensorManager = context.getSystemService(Service.SENSOR_SERVICE) as SensorManager
     private var locationManager: LocationManager = context.getSystemService(Service.LOCATION_SERVICE) as LocationManager
 
-    override fun registerSensorListener() {
+
+    //TODO handle another sesnors if this isn't available
+    override fun registerSensorListener() =
         sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
                 SensorManager.SENSOR_DELAY_UI)
-    }
 
-    override fun unregisterSensorListener() {
-        sensorManager.unregisterListener(this)
-    }
+
+    override fun unregisterSensorListener() = sensorManager.unregisterListener(this)
 
     override fun setOnCompassEventListener(compassEventListener: CompassEventListener?) {
         this.compassEventListener = compassEventListener

@@ -5,11 +5,8 @@ import android.hardware.SensorEventListener
 import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
-import android.support.annotation.RequiresPermission
-import java.util.jar.Manifest
 
 typealias CompassEventListener = (Int, Int) -> Unit
-typealias LocationEventListener = (Int, Int) -> Unit
 
 const val INVALID_LOCATION = -1.0
 
@@ -18,7 +15,7 @@ const val DEFAULT_ORIENTATION_THRESHOLD = 0.9f
 interface CompassManager : LocationListener, SensorEventListener {
     var orientationChangeThresholdInDegrees: Float
 
-    fun registerSensorListener()
+    fun registerSensorListener(): Boolean
 
     fun unregisterSensorListener()
 
