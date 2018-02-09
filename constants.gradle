@@ -1,13 +1,13 @@
 ext {
     app = [
-            buildTools: "26.0.2",
+            buildTools: "27.0.3",
             baseId: "com.rixspi.simplecompass"
     ]
 
     sdk = [
             min: 19,
             target: 26,
-            compile: 26
+            compile: 27
     ]
 
     lang = [
