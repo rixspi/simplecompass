@@ -52,6 +52,5 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
     override fun onPause() {
         super.onPause()
         viewModel.pauseCompass()
-        viewModel.compassManager.unregisterLocationChangesListener()
     }
 }

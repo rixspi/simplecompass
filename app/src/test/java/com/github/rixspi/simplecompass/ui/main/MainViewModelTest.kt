@@ -15,4 +15,5 @@ class MainViewModelTest : BaseTest() {
                 .inject(this)
     }
 
+    //Nothing to test yet :(
 }
