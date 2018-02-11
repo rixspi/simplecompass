@@ -25,11 +25,10 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     fun pauseCompass() {
         compassManager.unregisterSensorListener()
         compassManager.setOnCompassEventListener(null)
+        compassManager.unregisterLocationChangesListener()
     }
 
     private fun configureCompassEventListener() {
-
-
         compassManager.setOnCompassEventListener { last, current ->
             lastAzimuth.set(last)
             currentAzimuth.set(current)

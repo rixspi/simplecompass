@@ -104,11 +104,12 @@ ext {
             dexmakerMockito: "com.google.dexmaker:dexmaker-mockito:${dexmaker}",
             mockitoCore    : "org.mockito:mockito-core:${mockitoCore}",
             espressoCore   : "com.android.support.test.espresso:espresso-core:${espressoCoreVersion}",
-            testRunner     : "com.android.support.test:runner:${androidTestRunnerVersion}"
+            testRunner     : "com.android.support.test:runner:${androidTestRunnerVersion}",
+            kotlinTest     : "org.jetbrains.kotlin:kotlin-test-junit:${kotlin_version}"
     ]
 
 
     kotlinBase = [
-            sdk: "org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlin_version}"
+            sdk: "org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"
     ]
 }

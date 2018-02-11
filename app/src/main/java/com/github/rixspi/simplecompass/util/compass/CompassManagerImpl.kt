@@ -1,18 +1,16 @@
 package com.github.rixspi.simplecompass.util.compass
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Service
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationManager
 import android.support.annotation.RequiresPermission
+import com.github.rixspi.simplecompass.util.arrayOfNotNullOrNull
 
 
-class CompassManagerImpl(context: Activity,
-                         override var orientationChangeThresholdInDegrees: Float = DEFAULT_ORIENTATION_THRESHOLD)
+class CompassManagerImpl(private val sensorManager: SensorManager, private val locationManager: LocationManager)
     : CompassManager {
 
     private var currentDegree: Float = 0f
@@ -26,19 +24,11 @@ class CompassManagerImpl(context: Activity,
 
     private var currentLocation: Location? = null
 
-    override fun setOrientationChangeThreshold(degrees: Float) {
-        orientationChangeThresholdInDegrees = degrees
-    }
-
-    private var sensorManager: SensorManager = context.getSystemService(Service.SENSOR_SERVICE) as SensorManager
-    private var locationManager: LocationManager = context.getSystemService(Service.LOCATION_SERVICE) as LocationManager
-
-
     //TODO handle another sesnors if this isn't available
     override fun registerSensorListener() =
-        sensorManager.registerListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(this,
+                    sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
+                    SensorManager.SENSOR_DELAY_UI)
 
 
     override fun unregisterSensorListener() = sensorManager.unregisterListener(this)
@@ -49,15 +39,20 @@ class CompassManagerImpl(context: Activity,
 
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
-            SensorManager.getRotationMatrixFromVector(rMat, event.values)
-            var azimuth: Float = Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0].toDouble()).toFloat()
-            azimuth = transformDegreesToRotation(-azimuth)
-
-//            if (getDifferenceBetweenDegrees(currentDegree, -azimuth) > orientationChangeThresholdInDegrees) {
-                compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
-//            }
-            currentDegree = azimuth
+            handleDegreeCalculationFromSensorEvent(event)
         }
+    }
+
+    private fun handleDegreeCalculationFromSensorEvent(event: SensorEvent) {
+        var azimuth = getAzimuthFromRotationMatrixAndOrientation(event)
+        azimuth = transformDegreesToRotation(currentDegree, -azimuth)
+        compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
+        currentDegree = azimuth
+    }
+
+    private fun getAzimuthFromRotationMatrixAndOrientation(event: SensorEvent): Float {
+        SensorManager.getRotationMatrixFromVector(rMat, event.values)
+        return Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0].toDouble()).toFloat()
     }
 
     private fun getDifferenceBetweenDegrees(first: Float, second: Float): Float = Math.abs(first - second)
@@ -65,22 +60,24 @@ class CompassManagerImpl(context: Activity,
     /**
      * Helper method for calculating proper rotation value for use in the view's rotate animation
      */
-    private fun transformDegreesToRotation(degree: Float): Float {
-        return if (getDifferenceBetweenDegrees(currentDegree, degree) > halfCircleDegrees) {
-            degree + if (currentDegree >= 0) fullCircleDegrees else -fullCircleDegrees
+    fun transformDegreesToRotation(lastDegree: Float, degree: Float): Float {
+        return if (getDifferenceBetweenDegrees(lastDegree, degree) > halfCircleDegrees) {
+            degree + if (lastDegree >= 0) fullCircleDegrees else -fullCircleDegrees
         } else {
             degree
         }
     }
 
-    override fun getBearingBetweenCurrentAnd(dest: Location): Double {
-        currentLocation?.let {
-            val bearing: Double = currentLocation?.bearingTo(dest)?.toDouble() ?: 0.0
+    override fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double {
+        arrayOfNotNullOrNull(currentLocation, dest)?.let { (current, dest) ->
+            val bearing: Double = current.bearingTo(dest).toDouble()
             return this.currentDegree + bearing
         } ?: run {
             return INVALID_LOCATION
         }
     }
+
+    fun getCurrentLocation(): Location? = currentLocation
 
     override fun onLocationChanged(location: Location) {
         this.currentLocation = location
