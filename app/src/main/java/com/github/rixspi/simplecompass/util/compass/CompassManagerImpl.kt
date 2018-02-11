@@ -73,11 +73,11 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
             val bearing: Double = current.bearingTo(dest).toDouble()
             return this.currentDegree + bearing
         } ?: run {
-            return INVALID_LOCATION
+            return INVALID_LOCATION.toDouble()
         }
     }
 
-    fun getCurrentLocation(): Location? = currentLocation
+    override fun getCurrentLocation(): Location? = currentLocation
 
     override fun onLocationChanged(location: Location) {
         this.currentLocation = location

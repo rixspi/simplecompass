@@ -1,12 +1,12 @@
 package com.github.rixspi.simplecompass.ui.compass
 
+import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
 import com.github.rixspi.simplecompass.ui.base.BaseViewModel
 import com.github.rixspi.simplecompass.util.compass.CompassManager
+import com.github.rixspi.simplecompass.util.compass.INVALID_LOCATION
 import javax.inject.Inject
-
-const val INVALID_DESTINATION_HEADING = -10000
 
 class CompassViewModel @Inject constructor() : BaseViewModel() {
     @Inject
@@ -15,7 +15,12 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     val currentAzimuth = ObservableInt()
     val lastAzimuth = ObservableInt()
 
-    val destinationHeading = ObservableInt(INVALID_DESTINATION_HEADING)
+    val latitude = ObservableField<String>("")
+    val longitude = ObservableField<String>("")
+
+    private var destination: Location? = null
+
+    val destinationHeading = ObservableInt(INVALID_LOCATION)
 
     fun startCompass() {
         compassManager.registerSensorListener()
@@ -28,14 +33,26 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
         compassManager.unregisterLocationChangesListener()
     }
 
+    fun acceptCoordinates() {
+        if (latitude.get().isEmpty() or longitude.get().isEmpty()) {
+            destination = null
+        } else {
+            destination = Location("").apply {
+                latitude = this@CompassViewModel.latitude.get().toDouble()
+                longitude = this@CompassViewModel.longitude.get().toDouble()
+            }
+        }
+    }
+
+
     private fun configureCompassEventListener() {
         compassManager.setOnCompassEventListener { last, current ->
             lastAzimuth.set(last)
             currentAzimuth.set(current)
-//            destinationHeading.set(compassManager.getBearingBetweenCurrentAnd(Location("").apply {
-//                latitude = 48.864716
-//                longitude = 2.349014
-//            }).toInt())
+            destination?.let {
+                destinationHeading.set(compassManager.getBearingBetweenCurrentAnd(compassManager.getCurrentLocation(), it).toInt())
+            }
+
         }
     }
 

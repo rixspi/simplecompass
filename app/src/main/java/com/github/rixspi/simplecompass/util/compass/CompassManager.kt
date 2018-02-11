@@ -8,7 +8,7 @@ import android.os.Bundle
 
 typealias CompassEventListener = (Int, Int) -> Unit
 
-const val INVALID_LOCATION = -1.0
+const val INVALID_LOCATION = -1
 
 interface CompassManager : LocationListener, SensorEventListener {
 
@@ -24,6 +24,7 @@ interface CompassManager : LocationListener, SensorEventListener {
 
     fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double
 
+    fun getCurrentLocation(): Location?
 
     // no op functions
 
