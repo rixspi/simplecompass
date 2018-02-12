@@ -8,12 +8,9 @@ import android.os.Bundle
 
 typealias CompassEventListener = (Int, Int) -> Unit
 
-const val INVALID_LOCATION = -1.0
-
-const val DEFAULT_ORIENTATION_THRESHOLD = 0.9f
+const val INVALID_LOCATION = -10000
 
 interface CompassManager : LocationListener, SensorEventListener {
-    var orientationChangeThresholdInDegrees: Float
 
     fun registerSensorListener(): Boolean
 
@@ -21,14 +18,13 @@ interface CompassManager : LocationListener, SensorEventListener {
 
     fun setOnCompassEventListener(compassEventListener: CompassEventListener?)
 
-    fun setOrientationChangeThreshold(degrees: Float)
-
     fun registerLocationChangesListener()
 
     fun unregisterLocationChangesListener()
 
-    fun getBearingBetweenCurrentAnd(dest: Location): Double
+    fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double
 
+    fun getCurrentLocation(): Location?
 
     // no op functions
 
