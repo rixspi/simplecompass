@@ -75,22 +75,22 @@ class CompassManagerTest : BaseTest() {
     fun `verify degree to rotation calculation`() {
         //This case is when user rotates between end and start of the cirle, so it's not jumping
         var rotation = compassManager.transformDegreesToRotation(0f, 360f)
-        assertEquals( 720f ,  rotation)
+        assertEquals(720f, rotation)
 
         rotation = compassManager.transformDegreesToRotation(360f, 0f)
-        assertEquals( 360f ,  rotation)
+        assertEquals(360f, rotation)
 
         //Normal case when the difference isn't bigger than 180
         rotation = compassManager.transformDegreesToRotation(6f, 0f)
-        assertEquals( 0f ,  rotation)
+        assertEquals(0f, rotation)
     }
 
     @Test
     fun `verify if bearing calculation returns invalid while location is null`() {
         var bearingBetweenCurrentAnd = compassManager.getBearingBetweenCurrentAnd(null, mock(Location::class.java))
-        assertEquals( INVALID_LOCATION, bearingBetweenCurrentAnd)
+        assertEquals(INVALID_LOCATION.toDouble(), bearingBetweenCurrentAnd)
 
         bearingBetweenCurrentAnd = compassManager.getBearingBetweenCurrentAnd(mock(Location::class.java), null)
-        assertEquals( INVALID_LOCATION, bearingBetweenCurrentAnd)
+        assertEquals(INVALID_LOCATION.toDouble(), bearingBetweenCurrentAnd)
     }
 }

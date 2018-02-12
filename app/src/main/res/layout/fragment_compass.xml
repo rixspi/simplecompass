@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="com.github.rixspi.simplecompass.util.compass.CompassManager" />
+
         <variable
             name="model"
             type="com.github.rixspi.simplecompass.ui.compass.CompassViewModel" />
@@ -13,105 +15,181 @@
             type="com.github.rixspi.simplecompass.ui.compass.CompassViewAccess" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/semiTransparentWhite">
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintDimensionRatio="H, 1:1"
-            app:layout_constraintTop_toTopOf="parent">
+            <FrameLayout
+                android:id="@+id/compass_container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/input_lng"
+                app:layout_constraintDimensionRatio="H, 1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:rotation="@{model.destinationHeading}"
-                android:scaleType="fitStart"
-                app:visibleIf="@{model.destinationHeading.get() != -10000}"
-                android:src="@drawable/ic_arrow_drop_up_black_24dp" />
+                <ImageView
+                    android:layout_width="@dimen/direction_indicator_width"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/destination_indicator"
+                    android:rotation="@{model.destinationHeading}"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/ic_arrow_drop_up_black_24dp"
+                    app:visibleIf="@{model.destinationHeading.get() != -10000}" />
 
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/compass_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="25dp"
-                app:animateRotationFrom="@{model.lastAzimuth}"
-                app:animateRotationTo="@{model.currentAzimuth}">
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/compass_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/compass_margin"
+                    app:animateRotationFrom="@{model.lastAzimuth}"
+                    app:animateRotationTo="@{model.currentAzimuth}">
+
+                    <View
+                        android:id="@+id/center"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/compass_background"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_default"
+                        android:text="@string/north"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/font_xxxlarge"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_default"
+                        android:rotation="180"
+                        android:text="@string/south"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/font_xxxlarge"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_big"
+                        android:rotation="270"
+                        android:text="@string/west"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/font_xxxlarge"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/padding_big"
+                        android:rotation="90"
+                        android:text="@string/east"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="@dimen/font_xxxlarge"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </android.support.constraint.ConstraintLayout>
 
                 <View
-                    android:id="@+id/center"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@drawable/compass_background"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/direction_phone"
+                    android:layout_width="@dimen/direction_ind_size"
+                    android:layout_height="@dimen/direction_ind_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ic_add_location_black_24dp"
+                    android:rotation="180" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="N"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    app:layout_constraintCircle="@id/center"
-                    app:layout_constraintCircleAngle="0"
-                    app:layout_constraintCircleRadius="140dp" />
+            </FrameLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:rotation="180"
-                    android:text="S"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    app:layout_constraintCircle="@id/center"
-                    app:layout_constraintCircleAngle="180"
-                    app:layout_constraintCircleRadius="140dp" />
+            <TextView
+                android:id="@+id/tv_navigate_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/navigate_to"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_large"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/input_lng" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:rotation="270"
-                    android:text="W"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    app:layout_constraintCircle="@id/center"
-                    app:layout_constraintCircleAngle="270"
-                    app:layout_constraintCircleRadius="140dp" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_lat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/semiTransparentWhite"
+                app:errorEnabled="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/input_lng"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_navigate_to">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:rotation="90"
-                    android:text="E"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="40sp"
-                    android:textStyle="bold"
-                    app:layout_constraintCircle="@id/center"
-                    app:layout_constraintCircleAngle="90"
-                    app:layout_constraintCircleRadius="140dp" />
+                <EditText
+                    android:id="@+id/et_lat"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:hint="@string/latitude"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/et_lng"
+                    android:nextFocusRight="@+id/et_lng"
+                    android:nextFocusUp="@+id/et_lng"
+                    android:text="@={model.latitude}" />
 
+            </android.support.design.widget.TextInputLayout>
 
-            </android.support.constraint.ConstraintLayout>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_lng"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/semiTransparentWhite"
+                app:errorEnabled="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/input_lat">
 
-            <View
-                android:id="@+id/direction_phone"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_gravity="center"
-                android:background="@drawable/ic_add_location_black_24dp"
-                android:rotation="180" />
+                <EditText
+                    android:id="@+id/et_lng"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:hint="@string/longitude"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:text="@={model.longitude}" />
 
-        </FrameLayout>
+            </android.support.design.widget.TextInputLayout>
 
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
 </layout>

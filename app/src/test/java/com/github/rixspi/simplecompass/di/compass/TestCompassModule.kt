@@ -13,7 +13,7 @@ import org.mockito.Mockito
 @FragmentScope
 @Module
 class TestCompassModule {
-
+    @Provides
     fun provideCompassFragmentViewAccess(): CompassViewAccess = Mockito.mock(CompassViewAccess::class.java)
 
     @Provides
