@@ -1,3 +1,3 @@
 # simplecompass
 
-wind rose - Created by Evasplace - Freepik.com
+Android compass using soft sensor TYPE_ROTATION_VECTOR and as a backup accelerometer with magnetometer
