@@ -27,11 +27,16 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
 
     private var destination: Location? = null
 
+    var gpsPermitted = false
     val destinationHeading = ObservableInt(INVALID_LOCATION)
 
     fun startCompass() {
         compassManager.registerSensorListener()
         configureCompassEventListener()
+
+        if (gpsPermitted) {
+            compassManager.registerLocationChangesListener()
+        }
     }
 
     fun pauseCompass() {
@@ -46,11 +51,13 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
             updateDestinationWithProvidedLocation()
         } else {
             destination = null
-            destinationHeading.set(INVALID_LOCATION)
+            setDestinationHeadingInvalid()
         }
 
         viewAccess.hideKeyboard()
     }
+
+    fun setDestinationHeadingInvalid() = destinationHeading.set(INVALID_LOCATION)
 
     private fun isInputLocationProvided(): Boolean = latitude.get().isNotEmpty() and longitude.get().isNotEmpty()
 

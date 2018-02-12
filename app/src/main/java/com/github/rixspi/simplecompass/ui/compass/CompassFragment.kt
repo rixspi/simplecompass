@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import com.github.rixspi.simplecompass.R
 import com.github.rixspi.simplecompass.databinding.FragmentCompassBinding
@@ -21,6 +22,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
     @Inject
     lateinit var viewModel: CompassViewModel
 
+
     private val rxPermissions: RxPermissions by lazy {
         RxPermissions(activity)
     }
@@ -35,6 +37,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
 
     private fun handleInputErrorMessage(textInputLayout: TextInputLayout, messageStringId: Int?) {
         messageStringId?.let {
+            viewModel.setDestinationHeadingInvalid()
             textInputLayout.error = getString(it)
         } ?: run {
             textInputLayout.error = null
@@ -44,6 +47,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appComponent.plus(CompassModule(this)).inject(this)
+        activity.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,9 +57,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
 
         rxPermissions.request(android.Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe({
-                    if (it) {
-                        viewModel.compassManager.registerLocationChangesListener()
-                    }
+                    viewModel.gpsPermitted = it
                 })
 
         configureListeners()

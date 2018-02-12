@@ -8,7 +8,7 @@ import android.os.Bundle
 
 typealias CompassEventListener = (Int, Int) -> Unit
 
-const val INVALID_LOCATION = -1
+const val INVALID_LOCATION = -10000
 
 interface CompassManager : LocationListener, SensorEventListener {
 
