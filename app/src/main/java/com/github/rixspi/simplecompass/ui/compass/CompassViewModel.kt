@@ -6,11 +6,18 @@ import android.location.Location
 import com.github.rixspi.simplecompass.ui.base.BaseViewModel
 import com.github.rixspi.simplecompass.util.compass.CompassManager
 import com.github.rixspi.simplecompass.util.compass.INVALID_LOCATION
+import com.github.rixspi.simplecompass.util.compass.LocationValidator
 import javax.inject.Inject
 
 class CompassViewModel @Inject constructor() : BaseViewModel() {
     @Inject
     lateinit var compassManager: CompassManager
+
+    @Inject
+    lateinit var viewAccess: CompassViewAccess
+
+    @Inject
+    lateinit var locationValidator: LocationValidator
 
     val currentAzimuth = ObservableInt()
     val lastAzimuth = ObservableInt()
@@ -34,16 +41,33 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun acceptCoordinates() {
-        if (latitude.get().isEmpty() or longitude.get().isEmpty()) {
-            destination = null
+        if (isInputLocationProvided()) {
+            handleInvalidLocation()
+            updateDestinationWithProvidedLocation()
         } else {
-            destination = Location("").apply {
-                latitude = this@CompassViewModel.latitude.get().toDouble()
-                longitude = this@CompassViewModel.longitude.get().toDouble()
-            }
+            destination = null
+            destinationHeading.set(INVALID_LOCATION)
+        }
+
+        viewAccess.hideKeyboard()
+    }
+
+    private fun isInputLocationProvided(): Boolean = latitude.get().isNotEmpty() and longitude.get().isNotEmpty()
+
+    private fun updateDestinationWithProvidedLocation() {
+        destination = Location("").apply {
+            latitude = this@CompassViewModel.latitude.get().toDouble()
+            longitude = this@CompassViewModel.longitude.get().toDouble()
         }
     }
 
+    private fun handleInvalidLocation() {
+        val isLatValid = locationValidator.validateLatitude(latitude.get().toDouble())
+        val isLngValid = locationValidator.validateLongitude(longitude.get().toDouble())
+
+        viewAccess.handleInvalidLatError(show = !isLatValid)
+        viewAccess.handleInvalidLngError(show = !isLngValid)
+    }
 
     private fun configureCompassEventListener() {
         compassManager.setOnCompassEventListener { last, current ->

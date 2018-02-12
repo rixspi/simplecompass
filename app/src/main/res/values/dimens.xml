@@ -23,8 +23,9 @@
     <dimen name="font_xxlarge">24sp</dimen>
     <dimen name="font_xxlarger">32sp</dimen>
     <dimen name="font_xxxlarge">40sp</dimen>
-    <dimen name="compass_margin">24dp</dimen>
+    <dimen name="compass_margin">32dp</dimen>
     <dimen name="circle_radius">140dp</dimen>
     <dimen name="direction_ind_size">160dp</dimen>
+    <dimen name="direction_indicator_width">48dp</dimen>
 
 </resources>
