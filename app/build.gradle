@@ -59,11 +59,11 @@ dependencies {
     kapt glide.glideCompiler
     implementation glide.glideTransformations
 
-    implementation rx.java
-    implementation rx.kotlin
-    implementation rx.android
-    implementation rx.permissions
-    implementation rx.binding
+    implementation Rx.java
+    implementation Rx.kotlin
+    implementation Rx.android
+    implementation Rx.permissions
+    implementation Rx.binding
 
     implementation paperParcel.library
     implementation paperParcel.kotlin
