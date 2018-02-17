@@ -5,7 +5,6 @@ import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.support.annotation.RequiresPermission
@@ -147,21 +146,9 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
     @SuppressLint("MissingPermission")
     @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
     override fun registerLocationChangesListener() {
-        locationManager.requestLocationUpdates(getLocationProvider(), 1000 * 60L,
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 60L,
                 0f, this)
 
-        onLocationChanged(locationManager.getLastKnownLocation(getLocationProvider()))
-    }
-
-    private fun getLocationProvider(): String {
-        val criteria = Criteria().apply {
-            accuracy = Criteria.ACCURACY_FINE
-            isAltitudeRequired = false
-            isBearingRequired = true
-            isCostAllowed = true
-            powerRequirement = Criteria.POWER_MEDIUM
-        }
-
-        return locationManager.getBestProvider(criteria, true)
+        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
     }
 }
