@@ -61,7 +61,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
                 })
 
         configureListeners()
-
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         return binding.root
     }
 

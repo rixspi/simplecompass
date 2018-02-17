@@ -7,3 +7,6 @@
 /build
 /captures
 .externalNativeBuild
+buildSrc/build/kotlin-classes/main/Versions.class
+buildSrc/build/
+projectFilesBackup/
