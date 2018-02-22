@@ -8,8 +8,8 @@ apply plugin: 'kotlin-kapt'
 
 android {
 
-    compileSdkVersion sdk.compile
-    buildToolsVersion app.buildTools
+    compileSdkVersion PlatformDeps.compileSdk
+    buildToolsVersion PlatformDeps.buildTools
 
     dataBinding {
         enabled = true
@@ -21,9 +21,9 @@ android {
     }
 
     defaultConfig {
-        applicationId app.baseId
-        minSdkVersion sdk.min
-        targetSdkVersion sdk.target
+        applicationId PlatformDeps.appBaseId
+        minSdkVersion PlatformDeps.minSdk
+        targetSdkVersion PlatformDeps.targetSdk
         versionCode 1
         versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -43,21 +43,21 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation kotlinBase.sdk
+    implementation PlatformDeps.kotlinSdk
 
-    implementation support.appCompat
-    implementation support.appCompatV4
-    implementation support.appCompatV13
-    implementation support.design
-    implementation support.recyclerView
-    implementation support.cardView
-    kapt support.dataBinding
+    implementation Support.appCompat
+    implementation Support.appCompatV4
+    implementation Support.appCompatV13
+    implementation Support.design
+    implementation Support.recyclerView
+    implementation Support.cardView
+    kapt Support.dataBinding
 
-    implementation views.constraintLayout
+    implementation Views.constraintLayout
 
-    implementation glide.glide
-    kapt glide.glideCompiler
-    implementation glide.glideTransformations
+    implementation Glide.glide
+    kapt Glide.glideCompiler
+    implementation Glide.glideTransformations
 
     implementation Rx.java
     implementation Rx.kotlin
@@ -65,31 +65,29 @@ dependencies {
     implementation Rx.permissions
     implementation Rx.binding
 
-    implementation paperParcel.library
-    implementation paperParcel.kotlin
-    kapt paperParcel.compiler
+    implementation PaperParcel.library
+    implementation PaperParcel.kotlin
+    kapt PaperParcel.compiler
 
-    implementation squareup.retrofit
-    implementation squareup.retrofitGson
-    implementation squareup.loggingInterceptor
-    implementation squareup.retrofitRxAdapter
+    implementation Squareup.retrofit
+    implementation Squareup.retrofitGson
+    implementation Squareup.loggingInterceptor
+    implementation Squareup.retrofitRxAdapter
 
-    implementation joda.time
+    implementation Squareup.leakCanaryDebug
 
-    implementation squareup.leakCanaryDebug
+    implementation Dagger.di
+    implementation Dagger.diSupport
+    kapt Dagger.compiler
+    kapt Dagger.processor
 
-    implementation dagger.di
-    implementation dagger.diSupport
-    kapt dagger.compiler
-    kapt dagger.processor
+    kaptTest Dagger.compiler
 
-    kaptTest dagger.compiler
-
-    testImplementation rx.java
-    testImplementation rx.android
-    testImplementation squareup.leakCanaryTest
-    testImplementation test.junit
-    testImplementation test.mockitoCore
-    testImplementation dagger.di
-    testImplementation test.kotlinTest
+    testImplementation Rx.java
+    testImplementation Rx.android
+    testImplementation Squareup.leakCanaryTest
+    testImplementation Tests.junit
+    testImplementation Tests.mockitoCore
+    testImplementation Dagger.di
+    testImplementation Tests.kotlinTest
 }
