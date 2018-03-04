@@ -9,6 +9,7 @@ import com.github.rixspi.simplecompass.di.main.MainModule
 import com.github.rixspi.simplecompass.ui.base.BaseActivity
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
 import com.github.rixspi.simplecompass.ui.location.LocationChooserFragment
+import com.github.rixspi.simplecompass.util.enlargeThenShrink
 import javax.inject.Inject
 
 
@@ -43,10 +44,11 @@ class MainActivity : BaseActivity(), MainViewAccess {
     }
 
     override fun goToCompass() {
-        changeFragment(MainPosition.Compass)
+        binding.tvCompass.enlargeThenShrink { changeFragment(MainPosition.Compass) }
+
     }
 
     override fun goToLocations() {
-        changeFragment(MainPosition.Locations)
+        binding.tvLocations.enlargeThenShrink { changeFragment(MainPosition.Locations) }
     }
 }
