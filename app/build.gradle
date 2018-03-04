@@ -45,6 +45,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation PlatformDeps.kotlinSdk
 
+    implementation Support.placesApi
+
     implementation Support.appCompat
     implementation Support.appCompatV4
     implementation Support.appCompatV13

@@ -8,6 +8,7 @@ import com.github.rixspi.simplecompass.databinding.ActivityMainBinding
 import com.github.rixspi.simplecompass.di.main.MainModule
 import com.github.rixspi.simplecompass.ui.base.BaseActivity
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
+import com.github.rixspi.simplecompass.ui.location.LocationChooserFragment
 import javax.inject.Inject
 
 
@@ -16,6 +17,19 @@ class MainActivity : BaseActivity(), MainViewAccess {
 
     @Inject
     lateinit var viewModel: MainViewModel
+
+    private fun changeFragment(position: MainPosition) {
+        val fragment: Fragment = when (position) {
+            MainPosition.Compass -> CompassFragment()
+            MainPosition.Locations -> LocationChooserFragment()
+        }
+
+        supportFragmentManager.
+                beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(R.id.flMainContainer, fragment)
+                .commit()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,15 +42,11 @@ class MainActivity : BaseActivity(), MainViewAccess {
         changeFragment(MainPosition.Compass)
     }
 
-    private fun changeFragment(position: MainPosition) {
-        val fragment: Fragment = when (position) {
-            MainPosition.Compass -> CompassFragment()
-        }
+    override fun goToCompass() {
+        changeFragment(MainPosition.Compass)
+    }
 
-        supportFragmentManager.
-                beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(R.id.flMainContainer, fragment)
-                .commit()
+    override fun goToLocations() {
+        changeFragment(MainPosition.Locations)
     }
 }

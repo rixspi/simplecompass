@@ -149,6 +149,12 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 60L,
                 0f, this)
 
-        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
+        onLocationChanged(getLastKnownLocation())
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation(): Location? {
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
+                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
     }
 }

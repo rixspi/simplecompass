@@ -21,7 +21,9 @@ object Views {
 
 object Support {
     private val supportLibraryVersion = "26.0.0-beta2"
+    private val googlePlayServicesVersion = "11.8.0"
 
+    val placesApi = "com.google.android.gms:play-services-places:$googlePlayServicesVersion"
     val design = "com.android.support:design:$supportLibraryVersion"
     val recyclerView = "com.android.support:recyclerview-v7:$supportLibraryVersion"
     val cardView = "com.android.support:cardview-v7:$supportLibraryVersion"

@@ -6,5 +6,7 @@ interface CompassViewAccess {
 
     fun handleInvalidLngError(show: Boolean = true)
 
+    fun openGooglePlacePicker()
+
     fun hideKeyboard()
 }
