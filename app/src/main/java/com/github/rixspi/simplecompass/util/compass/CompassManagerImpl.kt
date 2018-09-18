@@ -37,11 +37,11 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
     override fun registerSensorListener(): Boolean {
         isRotationVectorSensorAvailable = sensorManager.registerListener(this,
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_UI)
+                SensorManager.SENSOR_DELAY_FASTEST)
 
         if (!isRotationVectorSensorAvailable) {
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI)
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_UI)
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST)
+            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST)
         }
 
         return isRotationVectorSensorAvailable
@@ -146,7 +146,7 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
     @SuppressLint("MissingPermission")
     @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
     override fun registerLocationChangesListener() {
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 60L,
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
                 0f, this)
 
         onLocationChanged(getLastKnownLocation())
