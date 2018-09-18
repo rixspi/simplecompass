@@ -3,8 +3,8 @@ object PlatformDeps {
     val targetSdk = 26
     val compileSdk = 27
     val buildTools = "27.0.3"
-    val androidPlugin = "3.0.1"
-    val kotlinVersion = "1.2.0"
+    val androidPlugin = "3.1.4"
+    val kotlinVersion = "1.2.70"
     val appBaseId = "com.rixspi.simplecompass"
 
     val kotlin_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -20,7 +20,7 @@ object Views {
 }
 
 object Support {
-    private val supportLibraryVersion = "26.0.0-beta2"
+    private val supportLibraryVersion = "26.1.0"
     private val googlePlayServicesVersion = "11.8.0"
 
     val placesApi = "com.google.android.gms:play-services-places:$googlePlayServicesVersion"
