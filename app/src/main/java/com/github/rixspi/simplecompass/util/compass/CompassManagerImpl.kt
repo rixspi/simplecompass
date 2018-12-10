@@ -82,7 +82,7 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
             SensorManager.getOrientation(rMat, orientation)
 
             val azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
-            calculateAzimuthAndInformListeners(azimuth)
+            calculateAzimuthAndNotifyListeners(azimuth)
         }
     }
 
@@ -93,7 +93,7 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
         currentDegree = azimuth
     }
 
-    private fun calculateAzimuthAndInformListeners(azimuth: Float) {
+    private fun calculateAzimuthAndNotifyListeners(azimuth: Float) {
         val azimuthDegrees = transformDegreesToRotation(currentDegree, -(azimuth + declination))
         compassEventListener?.invoke(currentDegree.toInt(), azimuthDegrees.toInt())
         currentDegree = azimuthDegrees
