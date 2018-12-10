@@ -59,18 +59,18 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
 
     fun setDestinationHeadingInvalid() = destinationHeading.set(INVALID_LOCATION)
 
-    private fun isInputLocationProvided(): Boolean = latitude.get().isNotEmpty() and longitude.get().isNotEmpty()
+    private fun isInputLocationProvided(): Boolean = latitude.get()!!.isNotEmpty() and longitude.get()!!.isNotEmpty()
 
     private fun updateDestinationWithProvidedLocation() {
         destination = Location("").apply {
-            latitude = this@CompassViewModel.latitude.get().toDouble()
-            longitude = this@CompassViewModel.longitude.get().toDouble()
+            latitude = this@CompassViewModel.latitude.get()!!.toDouble()
+            longitude = this@CompassViewModel.longitude.get()!!.toDouble()
         }
     }
 
     private fun handleInvalidLocation() {
-        val isLatValid = locationValidator.validateLatitude(latitude.get().toDouble())
-        val isLngValid = locationValidator.validateLongitude(longitude.get().toDouble())
+        val isLatValid = locationValidator.validateLatitude(latitude.get()!!.toDouble())
+        val isLngValid = locationValidator.validateLongitude(longitude.get()!!.toDouble())
 
         viewAccess.handleInvalidLatError(show = !isLatValid)
         viewAccess.handleInvalidLngError(show = !isLngValid)

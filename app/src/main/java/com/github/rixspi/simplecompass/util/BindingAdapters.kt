@@ -19,7 +19,7 @@ fun animateRotation(view: View?, from: Int?, to: Int?) {
                 to!!.toFloat(),
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f)
-        ra.duration = it.context.resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+        ra.duration = 10
         ra.fillAfter = true
 
         it.startAnimation(ra)
