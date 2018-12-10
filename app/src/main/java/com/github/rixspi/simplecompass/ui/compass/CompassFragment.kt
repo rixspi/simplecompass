@@ -64,6 +64,7 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
                 .subscribe {
                     viewModel.gpsPermitted = it
                 }
+                .let { viewModel.registerDisposable(it) }
 
         configureListeners()
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

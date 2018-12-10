@@ -1,16 +1,14 @@
 package com.github.rixspi.simplecompass.util.compass
 
-import android.hardware.Sensor
-import android.hardware.SensorEventListener
 import android.location.Location
-import android.location.LocationListener
-import android.os.Bundle
+import com.github.rixspi.simplecompass.util.compass.adapters.LocationListenerAdapter
+import com.github.rixspi.simplecompass.util.compass.adapters.SensorEventListenerAdapter
 
 typealias CompassEventListener = (Int, Int) -> Unit
 
 const val INVALID_LOCATION = -10000
 
-interface CompassManager : LocationListener, SensorEventListener {
+interface CompassManager : LocationListenerAdapter, SensorEventListenerAdapter {
 
     fun registerSensorListener(): Boolean
 
@@ -25,14 +23,4 @@ interface CompassManager : LocationListener, SensorEventListener {
     fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double
 
     fun getCurrentLocation(): Location?
-
-    // no op functions
-
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-
-    override fun onProviderEnabled(p0: String?) {}
-
-    override fun onProviderDisabled(p0: String?) {}
-
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 }
