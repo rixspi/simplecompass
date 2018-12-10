@@ -1,10 +1,10 @@
 object PlatformDeps {
     val minSdk = 19
-    val targetSdk = 26
-    val compileSdk = 27
-    val buildTools = "27.0.3"
-    val androidPlugin = "3.1.4"
-    val kotlinVersion = "1.2.70"
+    val targetSdk = 28
+    val compileSdk = 28
+    val buildTools = "28.0.3"
+    val androidPlugin = "3.2.1"
+    val kotlinVersion = "1.3.11"
     val appBaseId = "com.rixspi.simplecompass"
 
     val kotlin_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -31,7 +31,6 @@ object Support {
     val appCompatV4 = "com.android.support:support-v4:$supportLibraryVersion"
     val appCompatV13 = "com.android.support:support-v13:$supportLibraryVersion"
     val annotation = "com.android.support:support-annotations:$supportLibraryVersion"
-    val dataBinding = "com.android.databinding:compiler:${PlatformDeps.androidPlugin}"
 }
 
 
