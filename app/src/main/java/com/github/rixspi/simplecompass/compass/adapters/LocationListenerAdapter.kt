@@ -1,4 +1,4 @@
-package com.github.rixspi.simplecompass.util.compass.adapters
+package com.github.rixspi.simplecompass.compass.adapters
 
 import android.location.LocationListener
 import android.os.Bundle

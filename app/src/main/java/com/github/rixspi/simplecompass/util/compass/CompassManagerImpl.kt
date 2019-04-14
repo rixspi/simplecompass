@@ -1,6 +1,7 @@
 package com.github.rixspi.simplecompass.util.compass
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.LifecycleObserver
 import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -13,7 +14,7 @@ import java.util.*
 
 
 class CompassManagerImpl(private val sensorManager: SensorManager, private val locationManager: LocationManager)
-    : CompassManager {
+    : CompassManager, LifecycleObserver {
 
     private var currentDegree: Float = 0f
     private var orientation = FloatArray(3)

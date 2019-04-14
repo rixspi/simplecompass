@@ -53,6 +53,8 @@ dependencies {
     implementation Support.design
     implementation Support.recyclerView
     implementation Support.cardView
+    implementation Support.lifeCycle
+    kapt Support.lifeCycleProcessor
 
     implementation Views.constraintLayout
 
@@ -65,10 +67,6 @@ dependencies {
     implementation Rx.android
     implementation Rx.permissions
     implementation Rx.binding
-
-    implementation PaperParcel.library
-    implementation PaperParcel.kotlin
-    kapt PaperParcel.compiler
 
     implementation Squareup.retrofit
     implementation Squareup.retrofitGson
@@ -91,4 +89,5 @@ dependencies {
     testImplementation Tests.mockitoCore
     testImplementation Dagger.di
     testImplementation Tests.kotlinTest
+    testImplementation Tests.lifcycleTest
 }

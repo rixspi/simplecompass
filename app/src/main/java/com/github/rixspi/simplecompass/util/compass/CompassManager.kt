@@ -1,8 +1,8 @@
 package com.github.rixspi.simplecompass.util.compass
 
 import android.location.Location
-import com.github.rixspi.simplecompass.util.compass.adapters.LocationListenerAdapter
-import com.github.rixspi.simplecompass.util.compass.adapters.SensorEventListenerAdapter
+import com.github.rixspi.simplecompass.compass.adapters.LocationListenerAdapter
+import com.github.rixspi.simplecompass.compass.adapters.SensorEventListenerAdapter
 
 typealias CompassEventListener = (Int, Int) -> Unit
 
