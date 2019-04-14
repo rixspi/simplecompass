@@ -30,19 +30,8 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     var gpsPermitted = false
     val destinationHeading = ObservableInt(INVALID_LOCATION)
 
-    fun startCompass() {
-        compassManager.registerSensorListener()
+    fun dunno() {
         configureCompassEventListener()
-
-        if (gpsPermitted) {
-            compassManager.registerLocationChangesListener()
-        }
-    }
-
-    fun pauseCompass() {
-        compassManager.unregisterSensorListener()
-        compassManager.setOnCompassEventListener(null)
-        compassManager.unregisterLocationChangesListener()
     }
 
     fun acceptCoordinates() {
@@ -65,7 +54,7 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
         destination = Location("").apply {
             latitude = this@CompassViewModel.latitude.get()!!.toDouble()
             longitude = this@CompassViewModel.longitude.get()!!.toDouble()
-        }
+        }.also { compassManager.destination = it }
     }
 
     private fun handleInvalidLocation() {
@@ -77,13 +66,12 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun configureCompassEventListener() {
-        compassManager.setOnCompassEventListener { last, current ->
+        compassManager.setOnCompassEventListener { last, current, bearing ->
             lastAzimuth.set(last)
             currentAzimuth.set(current)
             destination?.let {
-                destinationHeading.set(compassManager.getBearingBetweenCurrentAnd(compassManager.getCurrentLocation(), it).toInt())
+                destinationHeading.set(bearing.toInt())
             }
-
         }
     }
 

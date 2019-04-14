@@ -5,6 +5,10 @@ import android.content.Context.LOCATION_SERVICE
 import android.content.Context.SENSOR_SERVICE
 import android.hardware.SensorManager
 import android.location.LocationManager
+import com.github.rixspi.simplecompass.compass.LocationProvider
+import com.github.rixspi.simplecompass.compass.LocationProviderImpl
+import com.github.rixspi.simplecompass.compass.SensorDataProvider
+import com.github.rixspi.simplecompass.compass.SensorDataProviderImpl
 import com.github.rixspi.simplecompass.di.base.scope.FragmentScope
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
 import com.github.rixspi.simplecompass.ui.compass.CompassViewAccess
@@ -35,6 +39,17 @@ class CompassModule(private val fragment: CompassFragment) {
             fragment.activity.getSystemService(LOCATION_SERVICE) as LocationManager
 
     @Provides
-    fun provideCompassManager(sensorManager: SensorManager, locationManager: LocationManager): CompassManager =
-            CompassManagerImpl(sensorManager, locationManager)
+    fun provideLocationProvider(locationManager: LocationManager): LocationProvider =
+            LocationProviderImpl(locationManager)
+
+    @Provides
+    fun provideSensorDataProvider(sensorManager: SensorManager): SensorDataProvider =
+            SensorDataProviderImpl(sensorManager)
+
+    @Provides
+    fun provideCompassManager(
+            sensorDataProvider: SensorDataProvider,
+            locationProvider: LocationProvider
+    ): CompassManager =
+            CompassManagerImpl(locationProvider, sensorDataProvider, fragment.lifecycle)
 }

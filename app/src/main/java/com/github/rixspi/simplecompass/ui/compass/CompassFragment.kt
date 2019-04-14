@@ -68,17 +68,8 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
 
         configureListeners()
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        viewModel.dunno()
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.startCompass()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.pauseCompass()
     }
 
     private fun configureListeners() {

@@ -12,17 +12,17 @@ import com.github.rixspi.simplecompass.util.compass.INVALID_LOCATION
 import com.github.rixspi.simplecompass.compass.adapters.LocationListenerAdapter
 import java.util.*
 
-interface LocationProvider {
+interface LocationProvider: LifecycleObserver {
     fun registerLocationChangesListener()
 
     fun unregisterLocationChangesListener()
 
-    fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double
+    fun getBearingBetweenCurrentAnd(dest: Location?): Double
 
     fun getCurrentLocation(): Location?
 }
 
-class LocationProviderImpl(private val locationManager: LocationManager) : LocationProvider, LocationListenerAdapter, LifecycleObserver {
+class LocationProviderImpl(private val locationManager: LocationManager) : LocationProvider, LocationListenerAdapter {
     private var currentDegree: Float = 0f
     private var currentLocation: Location? = null
     private var declination = 0.0f
@@ -47,7 +47,7 @@ class LocationProviderImpl(private val locationManager: LocationManager) : Locat
         locationManager.removeUpdates(this)
     }
 
-    override fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double {
+    override fun getBearingBetweenCurrentAnd(dest: Location?): Double {
         arrayOfNotNullOrNull(currentLocation, dest)?.let { (current, dest) ->
             val bearing: Double = current.bearingTo(dest).toDouble()
             return this.currentDegree + bearing

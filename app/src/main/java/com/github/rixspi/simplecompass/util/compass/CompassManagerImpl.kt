@@ -1,7 +1,9 @@
 package com.github.rixspi.simplecompass.util.compass
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.OnLifecycleEvent
 import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -9,13 +11,19 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationManager
 import android.support.annotation.RequiresPermission
+import com.github.rixspi.simplecompass.compass.LocationProvider
+import com.github.rixspi.simplecompass.compass.SensorDataProvider
 import com.github.rixspi.simplecompass.util.arrayOfNotNullOrNull
 import java.util.*
 
 
-class CompassManagerImpl(private val sensorManager: SensorManager, private val locationManager: LocationManager)
-    : CompassManager, LifecycleObserver {
+class CompassManagerImpl(
+        private val locationProvider: LocationProvider,
+        private val sensorDataProvider: SensorDataProvider,
+        private val lifecycle: Lifecycle)
+    : CompassManager {
 
+    override var destination: Location? = null
     private var currentDegree: Float = 0f
     private var orientation = FloatArray(3)
     private var rMat = FloatArray(9)
@@ -31,24 +39,26 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
 
     private val lowPassAlpha = 0.15f
 
-    private var currentLocation: Location? = null
+    init {
+        lifecycle.addObserver(sensorDataProvider)
+        lifecycle.addObserver(locationProvider)
+        lifecycle.addObserver(this)
 
-    private var isRotationVectorSensorAvailable: Boolean = true
-
-    override fun registerSensorListener(): Boolean {
-        isRotationVectorSensorAvailable = sensorManager.registerListener(this,
-                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                SensorManager.SENSOR_DELAY_FASTEST)
-
-        if (!isRotationVectorSensorAvailable) {
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST)
-            sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_FASTEST)
+        sensorDataProvider.setOnSensorChangedEventListener { vectorRotationAvailable, event ->
+            if (vectorRotationAvailable.not()) {
+                calculateDegreesFromAccelAndMagneto(event)
+            } else if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
+                calculateDegreesFromRotation(event)
+            }
         }
-
-        return isRotationVectorSensorAvailable
     }
 
-    override fun unregisterSensorListener() = sensorManager.unregisterListener(this)
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private fun removeLifecycleObservers() = with(lifecycle) {
+        removeObserver(sensorDataProvider)
+        removeObserver(locationProvider)
+        removeObserver(this@CompassManagerImpl)
+    }
 
     override fun setOnCompassEventListener(compassEventListener: CompassEventListener?) {
         this.compassEventListener = compassEventListener
@@ -62,14 +72,6 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
             output[i] = output[i] + lowPassAlpha * (input[i] - output[i])
         }
         return output
-    }
-
-    override fun onSensorChanged(event: SensorEvent) {
-        if (!isRotationVectorSensorAvailable) {
-            calculateDegreesFromAccelAndMagneto(event)
-        } else if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
-            calculateDegreesFromRotation(event)
-        }
     }
 
     private fun calculateDegreesFromAccelAndMagneto(event: SensorEvent) {
@@ -90,13 +92,13 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
     private fun calculateDegreesFromRotation(event: SensorEvent) {
         var azimuth = getAzimuthFromRotationMatrixAndOrientation(event)
         azimuth = transformDegreesToRotation(currentDegree, -azimuth)
-        compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt())
+        compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
         currentDegree = azimuth
     }
 
     private fun calculateAzimuthAndNotifyListeners(azimuth: Float) {
         val azimuthDegrees = transformDegreesToRotation(currentDegree, -(azimuth + declination))
-        compassEventListener?.invoke(currentDegree.toInt(), azimuthDegrees.toInt())
+        compassEventListener?.invoke(currentDegree.toInt(), azimuthDegrees.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
         currentDegree = azimuthDegrees
     }
 
@@ -116,46 +118,5 @@ class CompassManagerImpl(private val sensorManager: SensorManager, private val l
         } else {
             degree
         }
-    }
-
-    override fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double {
-        arrayOfNotNullOrNull(currentLocation, dest)?.let { (current, dest) ->
-            val bearing: Double = current.bearingTo(dest).toDouble()
-            return this.currentDegree + bearing
-        } ?: run {
-            return INVALID_LOCATION.toDouble()
-        }
-    }
-
-    override fun getCurrentLocation(): Location? = currentLocation
-
-    override fun onLocationChanged(location: Location?) {
-        this.currentLocation = location
-
-        currentLocation?.let {
-            declination = GeomagneticField(it.latitude.toFloat(),
-                    it.longitude.toFloat(), it.altitude.toFloat(), Date().time)
-                    .declination
-        }
-    }
-
-    override fun unregisterLocationChangesListener() {
-        locationManager.removeUpdates(this)
-    }
-
-
-    @SuppressLint("MissingPermission")
-    @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-    override fun registerLocationChangesListener() {
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-                0f, this)
-
-        onLocationChanged(getLastKnownLocation())
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getLastKnownLocation(): Location? {
-        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
-                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
     }
 }
