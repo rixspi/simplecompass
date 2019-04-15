@@ -24,13 +24,12 @@ class CompassManagerImpl(
     : CompassManager {
 
     override var destination: Location? = null
-    private var currentDegree: Float = 0f
     private var orientation = FloatArray(3)
     private var rMat = FloatArray(9)
 
     private var accelerometerData = FloatArray(3)
     private var magnetometerData = FloatArray(3)
-    private var declination = 0.0f
+
 
     private var compassEventListener: CompassEventListener? = null
 
@@ -54,7 +53,7 @@ class CompassManagerImpl(
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun removeLifecycleObservers() = with(lifecycle) {
+    fun removeLifecycleObservers() = with(lifecycle) {
         removeObserver(sensorDataProvider)
         removeObserver(locationProvider)
         removeObserver(this@CompassManagerImpl)
@@ -91,15 +90,15 @@ class CompassManagerImpl(
 
     private fun calculateDegreesFromRotation(event: SensorEvent) {
         var azimuth = getAzimuthFromRotationMatrixAndOrientation(event)
-        azimuth = transformDegreesToRotation(currentDegree, -azimuth)
-        compassEventListener?.invoke(currentDegree.toInt(), azimuth.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
-        currentDegree = azimuth
+        azimuth = transformDegreesToRotation(locationProvider.currentDegree, -azimuth)
+        compassEventListener?.invoke(locationProvider.currentDegree.toInt(), azimuth.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
+        locationProvider.currentDegree = azimuth
     }
 
     private fun calculateAzimuthAndNotifyListeners(azimuth: Float) {
-        val azimuthDegrees = transformDegreesToRotation(currentDegree, -(azimuth + declination))
-        compassEventListener?.invoke(currentDegree.toInt(), azimuthDegrees.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
-        currentDegree = azimuthDegrees
+        val azimuthDegrees = transformDegreesToRotation(locationProvider.currentDegree, -(azimuth + locationProvider.declination))
+        compassEventListener?.invoke(locationProvider.currentDegree.toInt(), azimuthDegrees.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
+        locationProvider.currentDegree = azimuthDegrees
     }
 
     private fun getAzimuthFromRotationMatrixAndOrientation(event: SensorEvent): Float {

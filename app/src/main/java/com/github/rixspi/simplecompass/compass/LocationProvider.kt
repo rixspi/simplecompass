@@ -13,6 +13,9 @@ import com.github.rixspi.simplecompass.compass.adapters.LocationListenerAdapter
 import java.util.*
 
 interface LocationProvider: LifecycleObserver {
+    var currentDegree: Float
+    var declination: Float
+
     fun registerLocationChangesListener()
 
     fun unregisterLocationChangesListener()
@@ -23,9 +26,11 @@ interface LocationProvider: LifecycleObserver {
 }
 
 class LocationProviderImpl(private val locationManager: LocationManager) : LocationProvider, LocationListenerAdapter {
-    private var currentDegree: Float = 0f
+    override var currentDegree: Float = 0F
+
+    override var declination: Float = 0F
     private var currentLocation: Location? = null
-    private var declination = 0.0f
+
 
     @SuppressLint("MissingPermission")
     private fun getLastKnownLocation(): Location? {

@@ -4,7 +4,8 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import com.github.rixspi.simplecompass.R
-import com.github.rixspi.simplecompass.databinding.ActivityMainBinding
+import com.github.rixspi.simplecompass.databinding.Main
+
 import com.github.rixspi.simplecompass.di.main.MainModule
 import com.github.rixspi.simplecompass.ui.base.BaseActivity
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 
 class MainActivity : BaseActivity(), MainViewAccess {
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: Main
 
     @Inject
     lateinit var viewModel: MainViewModel
