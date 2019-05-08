@@ -1,36 +1,18 @@
 package com.github.rixspi.simplecompass.compass
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
-import android.hardware.GeomagneticField
+import android.arch.lifecycle.LiveData
 import android.location.Location
 import android.location.LocationManager
-import com.github.rixspi.simplecompass.util.arrayOfNotNullOrNull
-import com.github.rixspi.simplecompass.util.compass.INVALID_LOCATION
 import com.github.rixspi.simplecompass.compass.adapters.LocationListenerAdapter
-import java.util.*
+import javax.inject.Inject
 
-interface LocationProvider: LifecycleObserver {
-    var currentDegree: Float
-    var declination: Float
 
-    fun registerLocationChangesListener()
+class LocationProviderLiveData @Inject constructor(
+        private val locationManager: LocationManager
+) : LiveData<Location>() {
 
-    fun unregisterLocationChangesListener()
-
-    fun getBearingBetweenCurrentAnd(dest: Location?): Double
-
-    fun getCurrentLocation(): Location?
-}
-
-class LocationProviderImpl(private val locationManager: LocationManager) : LocationProvider, LocationListenerAdapter {
-    override var currentDegree: Float = 0F
-
-    override var declination: Float = 0F
-    private var currentLocation: Location? = null
-
+    private val locationListenerAdapter: LocationListenerAdapter = LocationListenerAdapter { value = it }
 
     @SuppressLint("MissingPermission")
     private fun getLastKnownLocation(): Location? {
@@ -39,37 +21,26 @@ class LocationProviderImpl(private val locationManager: LocationManager) : Locat
     }
 
     @SuppressLint("MissingPermission")
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    override fun registerLocationChangesListener() {
+    private fun registerLocationChangesListener() {
+        //FIXME MissingPermission
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,
-                0f, this)
-
-        onLocationChanged(getLastKnownLocation())
+                0f, locationListenerAdapter)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    override fun unregisterLocationChangesListener() {
-        locationManager.removeUpdates(this)
+    private fun unregisterLocationChangesListener() {
+        locationManager.removeUpdates(locationListenerAdapter)
     }
 
-    override fun getBearingBetweenCurrentAnd(dest: Location?): Double {
-        arrayOfNotNullOrNull(currentLocation, dest)?.let { (current, dest) ->
-            val bearing: Double = current.bearingTo(dest).toDouble()
-            return this.currentDegree + bearing
-        } ?: run {
-            return INVALID_LOCATION.toDouble()
-        }
+
+    override fun onActive() {
+        super.onActive()
+        postValue(getLastKnownLocation())
+        registerLocationChangesListener()
     }
 
-    override fun getCurrentLocation(): Location? = currentLocation
-
-    override fun onLocationChanged(location: Location?) {
-        this.currentLocation = location
-
-        currentLocation?.let {
-            declination = GeomagneticField(it.latitude.toFloat(),
-                    it.longitude.toFloat(), it.altitude.toFloat(), Date().time)
-                    .declination
-        }
+    override fun onInactive() {
+        super.onInactive()
+        unregisterLocationChangesListener()
     }
 }
+

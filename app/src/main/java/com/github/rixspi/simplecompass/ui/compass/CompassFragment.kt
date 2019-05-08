@@ -1,6 +1,7 @@
 package com.github.rixspi.simplecompass.ui.compass
 
 import android.app.Activity
+import android.arch.lifecycle.LifecycleOwner
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -85,6 +86,8 @@ class CompassFragment : BaseFragment(), CompassViewAccess {
         startActivityForResult(PlacePicker.IntentBuilder().build(activity), PLACE_PICKER_REQUEST)
     }
 
+    override fun getLifeCycleOwner(): LifecycleOwner = this
+    
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {

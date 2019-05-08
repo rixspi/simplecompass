@@ -1,5 +1,6 @@
 package com.github.rixspi.simplecompass.ui.compass
 
+import android.arch.lifecycle.Observer
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
@@ -66,13 +67,15 @@ class CompassViewModel @Inject constructor() : BaseViewModel() {
     }
 
     private fun configureCompassEventListener() {
-        compassManager.setOnCompassEventListener { last, current, bearing ->
-            lastAzimuth.set(last)
-            currentAzimuth.set(current)
-            destination?.let {
-                destinationHeading.set(bearing.toInt())
+        compassManager.getLiveData().observe(viewAccess.getLifeCycleOwner(), Observer {
+            it?.let { compassData ->
+                lastAzimuth.set(compassData.azimuth)
+                currentAzimuth.set(compassData.degree)
+                destination?.let {
+                    destinationHeading.set(compassData.bearing.toInt())
+                }
             }
-        }
+        })
     }
 
 }

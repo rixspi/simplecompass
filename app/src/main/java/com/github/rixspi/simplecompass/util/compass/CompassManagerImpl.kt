@@ -1,66 +1,43 @@
 package com.github.rixspi.simplecompass.util.compass
 
-import android.annotation.SuppressLint
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
+import android.arch.lifecycle.*
 import android.hardware.GeomagneticField
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorManager
 import android.location.Location
-import android.location.LocationManager
-import android.support.annotation.RequiresPermission
-import com.github.rixspi.simplecompass.compass.LocationProvider
-import com.github.rixspi.simplecompass.compass.SensorDataProvider
-import com.github.rixspi.simplecompass.util.arrayOfNotNullOrNull
+import com.github.rixspi.simplecompass.compass.LocationProviderLiveData
+import com.github.rixspi.simplecompass.compass.SensorDataProviderLiveData
+import com.github.rixspi.simplecompass.util.combineAndCompute
 import java.util.*
 
 
 class CompassManagerImpl(
-        private val locationProvider: LocationProvider,
-        private val sensorDataProvider: SensorDataProvider,
-        private val lifecycle: Lifecycle)
-    : CompassManager {
+        private val locationProvider: LocationProviderLiveData,
+        private val sensorDataProvider: SensorDataProviderLiveData
+) : CompassManager {
 
     override var destination: Location? = null
     private var orientation = FloatArray(3)
     private var rMat = FloatArray(9)
 
+    private var currentDegree = 0F
+
     private var accelerometerData = FloatArray(3)
     private var magnetometerData = FloatArray(3)
-
-
-    private var compassEventListener: CompassEventListener? = null
 
     private val fullCircleDegrees: Int = 360
     private val halfCircleDegrees: Int = 180
 
     private val lowPassAlpha = 0.15f
 
-    init {
-        lifecycle.addObserver(sensorDataProvider)
-        lifecycle.addObserver(locationProvider)
-        lifecycle.addObserver(this)
 
-        sensorDataProvider.setOnSensorChangedEventListener { vectorRotationAvailable, event ->
-            if (vectorRotationAvailable.not()) {
-                calculateDegreesFromAccelAndMagneto(event)
-            } else if (event.sensor.type == Sensor.TYPE_ROTATION_VECTOR) {
-                calculateDegreesFromRotation(event)
-            }
+    override fun getLiveData(): LiveData<CompassData> = sensorDataProvider.combineAndCompute(locationProvider) { sensorEvent: Pair<Boolean, SensorEvent>, location: Location? ->
+        when {
+            sensorEvent.first.not() -> calculateDegreesFromAccelAndMagneto(sensorEvent.second, location, calculateDeclination(location))
+            sensorEvent.second.sensor.type == Sensor.TYPE_ROTATION_VECTOR -> calculateDegreesFromRotation(sensorEvent.second, location)
+            else -> CompassData(0, 0, 0.0)
         }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun removeLifecycleObservers() = with(lifecycle) {
-        removeObserver(sensorDataProvider)
-        removeObserver(locationProvider)
-        removeObserver(this@CompassManagerImpl)
-    }
-
-    override fun setOnCompassEventListener(compassEventListener: CompassEventListener?) {
-        this.compassEventListener = compassEventListener
     }
 
 
@@ -73,32 +50,37 @@ class CompassManagerImpl(
         return output
     }
 
-    private fun calculateDegreesFromAccelAndMagneto(event: SensorEvent) {
+    private fun calculateDegreesFromAccelAndMagneto(event: SensorEvent, currentLocation: Location?, declination: Float): CompassData {
         if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
             accelerometerData = lowPassFilter(event.values.clone(), accelerometerData)
         } else if (event.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
             magnetometerData = lowPassFilter(event.values.clone(), magnetometerData)
         }
 
-        if (SensorManager.getRotationMatrix(rMat, null, accelerometerData, magnetometerData)) {
+        return if (SensorManager.getRotationMatrix(rMat, null, accelerometerData, magnetometerData)) {
             SensorManager.getOrientation(rMat, orientation)
 
             val azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat()
-            calculateAzimuthAndNotifyListeners(azimuth)
+            calculateAzimuthAndNotifyListeners(azimuth, currentLocation, declination)
+        } else {
+            CompassData(0, 0, 0.0)
         }
     }
 
-    private fun calculateDegreesFromRotation(event: SensorEvent) {
+    private fun calculateDegreesFromRotation(event: SensorEvent, currentLocation: Location?): CompassData {
         var azimuth = getAzimuthFromRotationMatrixAndOrientation(event)
-        azimuth = transformDegreesToRotation(locationProvider.currentDegree, -azimuth)
-        compassEventListener?.invoke(locationProvider.currentDegree.toInt(), azimuth.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
-        locationProvider.currentDegree = azimuth
+        azimuth = transformDegreesToRotation(currentDegree, -azimuth)
+        val compasEventListener = CompassData(currentDegree.toInt(), azimuth.toInt(), getBearingBetweenCurrentAnd(destination, currentLocation))
+        currentDegree = azimuth
+
+        return compasEventListener
     }
 
-    private fun calculateAzimuthAndNotifyListeners(azimuth: Float) {
-        val azimuthDegrees = transformDegreesToRotation(locationProvider.currentDegree, -(azimuth + locationProvider.declination))
-        compassEventListener?.invoke(locationProvider.currentDegree.toInt(), azimuthDegrees.toInt(), locationProvider.getBearingBetweenCurrentAnd(destination))
-        locationProvider.currentDegree = azimuthDegrees
+    private fun calculateAzimuthAndNotifyListeners(azimuth: Float, currentLocation: Location?, declination: Float): CompassData {
+        val azimuthDegrees = transformDegreesToRotation(currentDegree, -(azimuth + declination))
+        val compassData = CompassData(currentDegree.toInt(), azimuthDegrees.toInt(), getBearingBetweenCurrentAnd(destination, currentLocation))
+        currentDegree = azimuthDegrees
+        return compassData
     }
 
     private fun getAzimuthFromRotationMatrixAndOrientation(event: SensorEvent): Float {
@@ -118,4 +100,22 @@ class CompassManagerImpl(
             degree
         }
     }
+
+    fun calculateDeclination(location: Location?): Float =
+            if (location != null) {
+                GeomagneticField(location.latitude.toFloat(),
+                        location.longitude.toFloat(), location.altitude.toFloat(), Date().time)
+                        .declination
+            } else {
+                0f
+            }
+
+
+    fun getBearingBetweenCurrentAnd(currentLocation: Location?, dest: Location?): Double =
+            if (currentLocation != null && dest != null) {
+                val bearing: Double = currentLocation.bearingTo(dest).toDouble()
+                currentDegree + bearing
+            } else {
+                INVALID_LOCATION.toDouble()
+            }
 }
