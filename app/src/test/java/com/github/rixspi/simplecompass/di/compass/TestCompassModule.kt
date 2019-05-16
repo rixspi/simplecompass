@@ -4,7 +4,7 @@ import android.app.Activity
 import com.github.rixspi.simplecompass.di.base.scope.FragmentScope
 import com.github.rixspi.simplecompass.ui.compass.CompassViewAccess
 import com.github.rixspi.simplecompass.ui.main.MainActivity
-import com.github.rixspi.simplecompass.util.compass.CompassManager
+import com.github.rixspi.simplecompass.compass.CompassManager
 import dagger.Module
 import dagger.Provides
 import org.mockito.Mockito

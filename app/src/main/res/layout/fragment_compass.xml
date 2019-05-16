@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="com.github.rixspi.simplecompass.util.compass.CompassManager" />
+        <import type="com.github.rixspi.simplecompass.compass.CompassManager" />
 
         <variable
             name="model"
@@ -143,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/semiTransparentWhite"
                 app:errorEnabled="true"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/ibtnPlacePicker"
                 app:layout_constraintEnd_toStartOf="@+id/input_lng"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_navigate_to">
@@ -171,7 +171,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/semiTransparentWhite"
                 app:errorEnabled="true"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/ibtnPlacePicker"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/input_lat">
 
@@ -188,6 +188,16 @@
                     android:text="@={model.longitude}" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/ibtnPlacePicker"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:onClick="@{() -> viewAccess.openGooglePlacePicker()}"
+                android:src="@drawable/ic_location_city_black_24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 

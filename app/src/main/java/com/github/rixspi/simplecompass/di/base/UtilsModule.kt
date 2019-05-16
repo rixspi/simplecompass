@@ -1,8 +1,8 @@
 package com.github.rixspi.simplecompass.di.base
 
 import com.github.rixspi.simplecompass.di.base.scope.ActivityScope
-import com.github.rixspi.simplecompass.util.compass.LocationValidator
-import com.github.rixspi.simplecompass.util.compass.LocationValidatorImpl
+import com.github.rixspi.simplecompass.compass.validators.LocationValidator
+import com.github.rixspi.simplecompass.compass.validators.LocationValidatorImpl
 import dagger.Module
 import dagger.Provides
 

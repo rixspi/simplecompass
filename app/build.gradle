@@ -41,9 +41,21 @@ android {
     }
 }
 
+afterEvaluate {
+    if (project.plugins.hasPlugin("kotlin-kapt")) {
+        kapt {
+            javacOptions {
+                option("-Xmaxerrs", 500)
+            }
+        }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation PlatformDeps.kotlinSdk
+
+    implementation Support.placesApi
 
     implementation Support.appCompat
     implementation Support.appCompatV4
@@ -51,7 +63,8 @@ dependencies {
     implementation Support.design
     implementation Support.recyclerView
     implementation Support.cardView
-    kapt Support.dataBinding
+    implementation Support.lifeCycle
+    kapt Support.lifeCycleProcessor
 
     implementation Views.constraintLayout
 
@@ -64,10 +77,6 @@ dependencies {
     implementation Rx.android
     implementation Rx.permissions
     implementation Rx.binding
-
-    implementation PaperParcel.library
-    implementation PaperParcel.kotlin
-    kapt PaperParcel.compiler
 
     implementation Squareup.retrofit
     implementation Squareup.retrofitGson
@@ -90,4 +99,5 @@ dependencies {
     testImplementation Tests.mockitoCore
     testImplementation Dagger.di
     testImplementation Tests.kotlinTest
+    testImplementation Tests.lifcycleTest
 }

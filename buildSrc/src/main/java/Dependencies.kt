@@ -1,10 +1,11 @@
 object PlatformDeps {
     val minSdk = 19
-    val targetSdk = 26
-    val compileSdk = 27
-    val buildTools = "27.0.3"
-    val androidPlugin = "3.0.1"
-    val kotlinVersion = "1.2.0"
+    val targetSdk = 28
+    val compileSdk = 28
+    val buildTools = "28.0.3"
+    val androidPlugin = "3.2.1"
+    val kotlinVersion = "1.3.11"
+    val lifecycleVersion = "1.1.1"
     val appBaseId = "com.rixspi.simplecompass"
 
     val kotlin_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
@@ -20,8 +21,10 @@ object Views {
 }
 
 object Support {
-    private val supportLibraryVersion = "26.0.0-beta2"
+    private val supportLibraryVersion = "26.1.0"
+    private val googlePlayServicesVersion = "11.8.0"
 
+    val placesApi = "com.google.android.gms:play-services-places:$googlePlayServicesVersion"
     val design = "com.android.support:design:$supportLibraryVersion"
     val recyclerView = "com.android.support:recyclerview-v7:$supportLibraryVersion"
     val cardView = "com.android.support:cardview-v7:$supportLibraryVersion"
@@ -29,7 +32,8 @@ object Support {
     val appCompatV4 = "com.android.support:support-v4:$supportLibraryVersion"
     val appCompatV13 = "com.android.support:support-v13:$supportLibraryVersion"
     val annotation = "com.android.support:support-annotations:$supportLibraryVersion"
-    val dataBinding = "com.android.databinding:compiler:${PlatformDeps.androidPlugin}"
+    val lifeCycle = "android.arch.lifecycle:extensions:${PlatformDeps.lifecycleVersion}"
+    val lifeCycleProcessor = "android.arch.lifecycle:compiler:${PlatformDeps.lifecycleVersion}"
 }
 
 
@@ -79,13 +83,6 @@ object Squareup {
     val leakCanaryTest = "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 }
 
-object PaperParcel {
-    private val paperParcelVersion = "2.0.1"
-
-    val library = "nz.bradcampbell:paperparcel:$paperParcelVersion"
-    val kotlin = "nz.bradcampbell:paperparcel-kotlin:$paperParcelVersion"
-    val compiler = "nz.bradcampbell:paperparcel-compiler:$paperParcelVersion"
-}
 
 object Tests {
     private val mockitoCoreVersion = "2.12.0"
@@ -101,4 +98,5 @@ object Tests {
     val espressoCore = "com.android.support.test.espresso:espresso-core:$espressoCoreVersion"
     val testRunner = "com.android.support.test:runner:$androidTestRunnerVersion"
     val kotlinTest = "org.jetbrains.kotlin:kotlin-test-junit:${PlatformDeps.kotlinVersion}"
+    val lifcycleTest = "android.arch.core:core-testing:${PlatformDeps.lifecycleVersion}"
 }
