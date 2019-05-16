@@ -5,12 +5,13 @@ import android.content.Context.LOCATION_SERVICE
 import android.content.Context.SENSOR_SERVICE
 import android.hardware.SensorManager
 import android.location.LocationManager
-import com.github.rixspi.simplecompass.compass.*
 import com.github.rixspi.simplecompass.di.base.scope.FragmentScope
 import com.github.rixspi.simplecompass.ui.compass.CompassFragment
 import com.github.rixspi.simplecompass.ui.compass.CompassViewAccess
-import com.github.rixspi.simplecompass.util.compass.CompassManager
-import com.github.rixspi.simplecompass.util.compass.CompassManagerImpl
+import com.github.rixspi.simplecompass.compass.CompassManager
+import com.github.rixspi.simplecompass.compass.CompassManagerImpl
+import com.github.rixspi.simplecompass.compass.providers.LocationProviderLiveData
+import com.github.rixspi.simplecompass.compass.providers.SensorDataProviderLiveData
 import dagger.Module
 import dagger.Provides
 

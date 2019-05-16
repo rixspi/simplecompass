@@ -1,4 +1,4 @@
-package com.github.rixspi.simplecompass.util.compass
+package com.github.rixspi.simplecompass.compass
 
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LiveData

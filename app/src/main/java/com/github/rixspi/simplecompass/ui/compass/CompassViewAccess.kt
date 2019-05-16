@@ -10,7 +10,6 @@ interface CompassViewAccess {
 
     fun openGooglePlacePicker()
 
-    //FIXME BAD!!!!!!
     fun getLifeCycleOwner(): LifecycleOwner
 
     fun hideKeyboard()

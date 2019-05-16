@@ -1,4 +1,4 @@
-package com.github.rixspi.simplecompass.compass
+package com.github.rixspi.simplecompass.compass.providers
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData

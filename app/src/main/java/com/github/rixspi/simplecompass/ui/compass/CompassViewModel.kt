@@ -5,9 +5,9 @@ import android.databinding.ObservableField
 import android.databinding.ObservableInt
 import android.location.Location
 import com.github.rixspi.simplecompass.ui.base.BaseViewModel
-import com.github.rixspi.simplecompass.util.compass.CompassManager
-import com.github.rixspi.simplecompass.util.compass.INVALID_LOCATION
-import com.github.rixspi.simplecompass.util.compass.LocationValidator
+import com.github.rixspi.simplecompass.compass.CompassManager
+import com.github.rixspi.simplecompass.compass.INVALID_LOCATION
+import com.github.rixspi.simplecompass.compass.validators.LocationValidator
 import javax.inject.Inject
 
 class CompassViewModel @Inject constructor() : BaseViewModel() {

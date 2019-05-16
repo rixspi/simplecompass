@@ -1,4 +1,4 @@
-package com.github.rixspi.simplecompass.util.compass
+package com.github.rixspi.simplecompass.compass
 
 data class CompassData(
         val degree: Int,
